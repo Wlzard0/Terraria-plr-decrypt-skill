@@ -24,7 +24,7 @@ $skill-installer install https://github.com/<你的用户名>/terraria-plr-decry
 
 把存档文件路径交给 Codex 即可，例如：
 
-- “帮我解密这个存档：`C:\...\I_Am_a_Rock.plr`，然后告诉我里面有什么”
+- “帮我解密这个存档：`C:\Users\Documents\My Games\Terraria\Players\I_Am_a_Rock.plr`，然后告诉我里面有什么”
 - “解析这个 `.plr` 文件，列出我的背包和装备”
 - “解释这个 `.plr` 存档里的某个字段是什么意思”
 
