@@ -1,0 +1,7 @@
+interface:
+  display_name: "泰拉瑞亚 .plr 存档解密"
+  short_description: "解密并解析泰拉瑞亚角色存档(.plr)，输出中文分析报告"
+  default_prompt: "Use $terraria-plr-decrypt to decrypt and analyze this Terraria player save (.plr)."
+
+policy:
+  allow_implicit_invocation: true
