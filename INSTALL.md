@@ -10,14 +10,14 @@
 在 Codex 对话中发送：
 
 ```
-$skill-installer install https://github.com/<你的用户名>/terraria-plr-decrypt/tree/main/skills/terraria-plr-decrypt
+$skill-installer install https://github.com/Wlzard0/Terraria-plr-decrypt-skill/tree/main/skills/terraria-plr-decrypt
 ```
 
 Codex 会自动把技能下载到 `$CODEX_HOME/skills/terraria-plr-decrypt`（Windows 通常是 `C:\Users\<你的用户名>\.codex\skills\`）。安装完成后，从下一轮对话开始生效。
 
 ## 方法二：手动安装
 
-1. 下载本仓库：点击页面右上角 **Code → Download ZIP**，或运行 `git clone https://github.com/<你的用户名>/terraria-plr-decrypt.git`
+1. 下载本仓库：点击页面右上角 **Code → Download ZIP**，或运行 `git clone https://github.com/Wlzard0/Terraria-plr-decrypt-skill.git`
 2. 把 `skills/terraria-plr-decrypt` 整个文件夹复制到本机技能目录：
    - Windows：`C:\Users\<你的用户名>\.codex\skills\`
    - macOS / Linux：`~/.codex/skills/`
