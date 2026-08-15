@@ -15,7 +15,7 @@ Terraria 角色存档（`.plr`）解密与分析技能，供 Codex / ChatGPT 使
 在 Codex 对话中发送：
 
 ```
-$skill-installer install https://github.com/<你的用户名>/terraria-plr-decrypt/tree/main/skills/terraria-plr-decrypt
+$skill-installer install https://github.com/Wlzard0/Terraria-plr-decrypt-skill/tree/main/skills/terraria-plr-decrypt
 ```
 
 详细安装步骤见 [INSTALL.md](INSTALL.md)。
