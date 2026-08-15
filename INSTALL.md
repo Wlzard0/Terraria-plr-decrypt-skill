@@ -35,7 +35,7 @@ Codex 会自动把技能下载到 `$CODEX_HOME/skills/terraria-plr-decrypt`（Wi
 
 把 `.plr` 文件路径发给 Codex，例如：
 
-> 帮我解密 `E:\Desktop\...\I_Am_a_Rock.plr`，并按存档格式说明里面有什么。
+> 帮我解密 `C:\Users\Documents\My Games\Terraria\Players\I_Am_a_Rock.plr`，并按存档格式说明里面有什么。
 
 Codex 会调用解析脚本生成报告，并用中文总结内容。
 
