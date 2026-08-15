@@ -1,6 +1,6 @@
 # terraria-plr-decrypt
 
-Terraria 角色存档（`.plr`）解密与分析技能，供 Codex / ChatGPT 使用。
+Terraria 角色存档（`.plr`）解密与分析技能，供 Codex 使用。
 
 ## 功能特性
 
