@@ -1,11 +1,13 @@
 # terraria-plr-decrypt
 
-Terraria 角色存档（`.plr`）解密与分析技能，供 Codex 使用。
+Terraria 角色存档（`.plr`）解密与分析技能，供 Codex、Claude Code、DSH（DeepSeek Harness）等支持 Agent Skills 的客户端使用。
 
 ## 功能特性
 
 - AES-128 解密（纯 Python 实现，离线可用，无第三方依赖）
-- 完整解析 Terraria 1.4.5.6（存档版本 319）全部字段，旧版本（279 / 194）尽力兼容
+- 完整解析 Terraria 1.4.5.6（存档版本 319）全部字段
+- 支持 Terraria 1.4.5.8（存档版本 322 / 324 / 326），版本差异已对照源码核实，并用真实存档解析验证
+- 旧版本（279 / 194）尽力兼容
 - 内置中文物品、增益、前缀名称对照
 - 输出可读文本报告与 JSON 数据，方便查看背包、装备、增益及字段含义
 - 只读分析：不修改存档文件，不保存解密副本
@@ -17,6 +19,11 @@ Terraria 角色存档（`.plr`）解密与分析技能，供 Codex 使用。
 ```
 $skill-installer install https://github.com/Wlzard0/Terraria-plr-decrypt-skill/tree/main/skills/terraria-plr-decrypt
 ```
+
+其他客户端：把 `skills/terraria-plr-decrypt` 整个文件夹复制到对应的技能目录即可：
+
+- Claude Code：`~/.claude/skills/`
+- DSH（DeepSeek Harness）：`~/.agents/skills/`（Windows 为 `C:\Users\<你的用户名>\.agents\skills\`）
 
 详细安装步骤见 [INSTALL.md](INSTALL.md)。
 
@@ -38,14 +45,18 @@ terraria-plr-decrypt/
 ├── scripts/
 │   └── parse_plr.py          # 解密与解析脚本（纯 Python，无第三方依赖）
 └── references/
-    ├── format.md             # v319 字段格式与版本说明
+    ├── format.md             # v319–v326 字段格式与版本差异说明
     └── names.md              # 中文物品/增益/前缀名称对照
 ```
 
 ## 兼容性
 
 - 完全支持：Terraria 1.4.5.6（存档版本 319）
-- 尽力支持：旧版本 279 / 194
+- 支持：Terraria 1.4.5.8（存档版本 322 / 324 / 326）
+  - v322+：主装备、染料及三套装备方案里的每个物品多一个 `favorited`（收藏）标记
+  - v324+：`ateArtisanBread` 之后多一个保留布尔值
+  - v326：版本号被接受，没有额外字段
+- 尽力支持：旧版本 279 / 194（改动后未重新验证）
 - 运行环境：Python 3，离线可用，无需安装第三方包
 
 ## 许可

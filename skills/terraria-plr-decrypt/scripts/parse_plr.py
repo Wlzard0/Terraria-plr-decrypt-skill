@@ -205,6 +205,14 @@ def item5(r):
     return {"id": r.i32(), "prefix": r.u8()}
 
 
+def item5f(r, version):
+    """Main armor/dye slot: v322+ appends `bool favorited` (6 bytes total)."""
+    item = item5(r)
+    if version >= 322:
+        item["favorite"] = r.bool_()
+    return item
+
+
 def item10(r):
     return {"id": r.i32(), "count": r.i32(), "prefix": r.u8(), "favorite": r.bool_()}
 
@@ -288,11 +296,13 @@ def parse_plr(data):
         out["unlocked_biome_torches"] = False
         out["using_biome_torches"] = False
 
-    perms = ["ate_artisan_bread"]
     if version >= 256:
         out["ate_artisan_bread"] = r.bool_()
     else:
         out["ate_artisan_bread"] = False
+    # v324+: 1.4.5.8 writes one reserved bool (always false) here; read and keep as raw.
+    if version >= 324:
+        out["reserved_v324"] = r.bool_()
     if version >= 260:
         for k in ["used_aegis_crystal", "used_aegis_fruit", "used_arcane_crystal",
                   "used_galaxy_pearl", "used_gummy_worm", "used_ambrosia"]:
@@ -327,8 +337,8 @@ def parse_plr(data):
         "shoes": r.rgb(),
     }
 
-    out["equipment"] = [item5(r) for _ in range(20)]
-    out["dye"] = [item5(r) for _ in range(10)]
+    out["equipment"] = [item5f(r, version) for _ in range(20)]
+    out["dye"] = [item5f(r, version) for _ in range(10)]
     out["inventory"] = [item10(r) for _ in range(50)]
     out["coins"] = [item10(r) for _ in range(4)]
     out["ammo"] = [item10(r) for _ in range(4)]
@@ -445,9 +455,11 @@ def parse_plr(data):
     if version >= 262:
         out["current_loadout_index"] = r.i32()
         out["loadouts"] = []
+        # v262-321: 30 x item9 (9B); v322+: each entry adds `bool favorited` (10B).
+        loadout_item = (lambda rr: item10(rr)) if version >= 322 else item9
         for _ in range(3):
-            slots = [item9(r) for _ in range(20)]
-            dyes = [item9(r) for _ in range(10)]
+            slots = [loadout_item(r) for _ in range(20)]
+            dyes = [loadout_item(r) for _ in range(10)]
             hide = [r.bool_() for _ in range(10)]
             out["loadouts"].append({"slots": compact(slots), "dyes": compact(dyes), "hide": hide})
     else:
@@ -476,7 +488,16 @@ def parse_plr(data):
 
     out["parsed_offset"] = r.off
     out["plaintext_length"] = len(data)
-    out["trailing_hex"] = data[r.off:].hex(" ") if r.off < len(data) else ""
+    # Remaining bytes: valid PKCS#7 AES padding (n bytes of value n, 1..16) is NOT game data.
+    rest = data[r.off:]
+    out["pkcs7_padding_hex"] = ""
+    out["trailing_hex"] = ""
+    if rest:
+        n = rest[-1]
+        if 1 <= n <= 16 and len(rest) == n and all(b == n for b in rest):
+            out["pkcs7_padding_hex"] = rest.hex(" ")
+        else:
+            out["trailing_hex"] = rest.hex(" ")
     return out
 
 
@@ -553,7 +574,13 @@ def build_text(out, names):
     lines = []
     lines.append(f"# {out['name']} 存档分析")
     lines.append("")
-    lines.append(f"- 存档版本：{out['version']}（1.4.5.x）" if out["version"] >= 315 else f"- 存档版本：{out['version']}")
+    ver_names = {326: "1.4.5.8", 319: "1.4.5.6"}
+    if out["version"] in ver_names:
+        lines.append(f"- 存档版本：{out['version']}（{ver_names[out['version']]}）")
+    elif out["version"] >= 315:
+        lines.append(f"- 存档版本：{out['version']}（1.4.5.x）")
+    else:
+        lines.append(f"- 存档版本：{out['version']}")
     lines.append(f"- 难度：{DIFF.get(out['difficulty'], out['difficulty'])}")
     secs = out["play_time_ticks"] / 10_000_000
     lines.append(f"- 游玩时长：{secs / 3600:.1f} 小时（{out['play_time_ticks']} ticks）")
@@ -644,8 +671,10 @@ def build_text(out, names):
         lines.append(f"- 创造模式权限：{len(out['creative_powers'])} 项")
     if out["one_time_dialogues"]:
         lines.append(f"- 一次性对话记录：{len(out['one_time_dialogues'])} 条")
+    if out.get("pkcs7_padding_hex"):
+        lines.append(f"- 文件尾部：合法 PKCS#7 填充 {out['pkcs7_padding_hex']}（非游戏字段）")
     if out["trailing_hex"]:
-        lines.append(f"- 尾部多余字节（1.4.5.6 读取时忽略）：{out['trailing_hex']}")
+        lines.append(f"- 未读取的尾部字节（不是合法填充，按原始 hex 输出）：{out['trailing_hex']}")
     lines.append("")
     return "\n".join(lines)
 
